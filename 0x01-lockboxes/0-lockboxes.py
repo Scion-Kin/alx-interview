@@ -26,7 +26,8 @@ def canUnlockAll(boxes):
             for key in keys:
                 if boxes[key] != 'opened':
                     box_found = True
-                    keys.update([i for i in boxes[key] if i < len(boxes) and i != 0])
+                    keys.update([i for i in boxes[key] if i < len(boxes)
+                                 and i != 0])
                     boxes[key] = 'opened'
                     keys.remove(key)
                     break
