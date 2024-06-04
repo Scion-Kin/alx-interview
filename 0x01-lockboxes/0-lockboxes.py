@@ -26,15 +26,12 @@ def canUnlockAll(boxes):
             for key in keys:
                 if boxes[key] != 'opened':
                     box_found = True
-                    keys.update([i for i in boxes[key] if i < len(boxes)
-                                 and i != 0])
+                    keys.update([i for i in boxes[key] if i <
+                                 len(boxes) and i != 0])
                     boxes[key] = 'opened'
                     keys.remove(key)
                     break
 
             if not box_found:
-                ''' We break the function here since,
-                if the not box was found matching the keys in the set,
-                the loop would run forever pointlessly '''
 
                 return False
