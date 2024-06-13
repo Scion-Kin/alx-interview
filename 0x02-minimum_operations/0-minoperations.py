@@ -26,8 +26,11 @@ def minOperations(n):
         copy "n" number of H characters in a file using
         Copy all and Paste operations '''
 
-    if type(n) is not int:
+    if type(n) is not int or n == 0:
         return 0
+
+    if n == 1:
+        return 1
 
     if is_prime(n):
         return n
