@@ -21,7 +21,7 @@ def is_prime(n):
     return True
 
 
-def minOperations(n):
+def minOperations(n: int) -> int:
     ''' Calculates the minimum number of operations needed to
         copy "n" number of H characters in a file using
         Copy all and Paste operations '''
