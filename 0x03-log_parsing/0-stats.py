@@ -5,7 +5,14 @@ import sys
 import re
 import signal
 
-regex = r'(\d{1,3}\.){3}\d{1,3} - \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{6}\] \"GET \/projects\/260 HTTP\/1\.1\" (\d{3}) (\d+)'
+fp = (
+        r'\s*(?P<ip>\S+)\s*',
+        r'\s*\[(?P<date>\d+\-\d+\-\d+ \d+:\d+:\d+\.\d+)\]',
+        r'\s*"(?P<request>[^"]*)"\s*',
+        r'\s*(?P<status_code>\S+)',
+        r'\s*(?P<file_size>\d+)'
+    )
+fmt = '{}\\-{}{}{}{}\\s*'.format(fp[0], fp[1], fp[2], fp[3], fp[4])
 
 status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 total_lines = 0
@@ -15,22 +22,20 @@ try:
     for line in sys.stdin:
         total_lines += 1
 
-        match = re.fullmatch(regex, line.strip())
+        match = re.fullmatch(fmt, line.strip())
         if match:
-            stat_code = int(match.group(2))
-            in_file_size = int(match.group(3))
-            file_size += in_file_size
+            stat_code = int(match.group('status_code'))
+            file_size += int(match.group('file_size'))
 
-            if stat_code in status_codes:
+            if stat_code and stat_code in status_codes:
                 status_codes[stat_code] += 1
 
             if total_lines % 10 == 0:
                 print(f"File size: {file_size}")
                 for key, val in sorted(status_codes.items()):
-                    print(f"{key}: {val}")
+                    print("{}: {}".format(key, val), flush=True)
 
-except KeyboardInterrupt:
+except (KeyboardInterrupt, EOFError):
     print(f"File size: {file_size}")
-    for key, val in status_codes.items():
-        print(f"{key}: {val}")
-
+    for key, val in sorted(status_codes.items()):
+        print("{}: {}".format(key, val), flush=True)
