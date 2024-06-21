@@ -18,26 +18,30 @@ status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 total_lines = 0
 file_size = 0
 
-try:
-    for line in sys.stdin:
-        total_lines += 1
-
-        match = re.fullmatch(fmt, line.strip())
-        if match:
-            stat_code = int(match.group('status_code'))
-            file_size += int(match.group('file_size'))
-
-            if stat_code and stat_code in status_codes:
-                status_codes[stat_code] += 1
-
-            if total_lines % 10 == 0:
-                print(f"File size: {file_size}")
-                for key, val in sorted(status_codes.items()):
-                    if val != 0:
-                        print("{}: {}".format(key, val), flush=True)
-
-except (KeyboardInterrupt, EOFError):
+def printStats():
     print(f"File size: {file_size}")
     for key, val in sorted(status_codes.items()):
         if val != 0:
-            print("{}: {}".format(key, val), flush=True)
+            print("{}: {}".format(key, val))
+
+try:
+    while True:
+        total_lines += 1
+
+        match = re.fullmatch(fmt, input().strip())
+        if match:
+            try:
+                stat_code = int(match.group('status_code'))
+                file_size += int(match.group('file_size'))
+
+                if stat_code and stat_code in status_codes:
+                    status_codes[stat_code] += 1
+
+                if total_lines % 10 == 0:
+                    printStats()
+
+            except ValueError:
+                continue
+
+except (KeyboardInterrupt, EOFError):
+    printStats()
