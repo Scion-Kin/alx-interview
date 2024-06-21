@@ -33,9 +33,11 @@ try:
             if total_lines % 10 == 0:
                 print(f"File size: {file_size}")
                 for key, val in sorted(status_codes.items()):
-                    print("{}: {}".format(key, val), flush=True)
+                    if val != 0:
+                        print("{}: {}".format(key, val), flush=True)
 
 except (KeyboardInterrupt, EOFError):
     print(f"File size: {file_size}")
     for key, val in sorted(status_codes.items()):
-        print("{}: {}".format(key, val), flush=True)
+        if val != 0:
+            print("{}: {}".format(key, val), flush=True)
