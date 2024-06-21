@@ -3,7 +3,6 @@
 
 import sys
 import re
-import signal
 
 fp = (
         r'\s*(?P<ip>\S+)\s*',
@@ -17,14 +16,6 @@ fmt = '{}\\-{}{}{}{}\\s*'.format(fp[0], fp[1], fp[2], fp[3], fp[4])
 status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 total_lines = 0
 file_size = 0
-
-
-def printStats():
-    print(f"File size: {file_size}")
-    for key, val in sorted(status_codes.items()):
-        if val != 0:
-            print("{}: {}".format(key, val))
-
 
 try:
     while True:
@@ -40,10 +31,16 @@ try:
                     status_codes[stat_code] += 1
 
                 if total_lines % 10 == 0:
-                    printStats()
+                    print(f"File size: {file_size}")
+                    for key, val in sorted(status_codes.items()):
+                        if val != 0:
+                            print("{}: {}".format(key, val))
 
             except ValueError:
                 continue
 
 except (KeyboardInterrupt, EOFError):
-    printStats()
+    print(f"File size: {file_size}")
+    for key, val in sorted(status_codes.items()):
+        if val != 0:
+            print("{}: {}".format(key, val))
