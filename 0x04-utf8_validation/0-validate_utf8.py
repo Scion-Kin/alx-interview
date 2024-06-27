@@ -5,7 +5,7 @@
 def recur(li):
     ''' Handles execution with recursion '''
 
-    continue_indicators = {194: 2, 229: 3, 240: 4, 250: 5}
+    continue_indicators = {194: 2, 229: 3, 240: 4}
 
     if len(li) == 0:
         return True
