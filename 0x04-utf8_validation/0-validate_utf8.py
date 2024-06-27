@@ -2,7 +2,7 @@
 ''' This defines a function '''
 
 
-def validUTF8(data):
+def validUTF8(data: list) -> bool:
     ''' This validates if a sequence in a list is UTF-8 compliant '''
 
     continue_indicators = {194: 2, 229: 3, 240: 4}
