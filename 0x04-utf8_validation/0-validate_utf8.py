@@ -19,7 +19,7 @@ def validUTF8(data):
     if len(data) < continue_indicators[data[0]]:
         return False
 
-    for i in data[1:continue_indicators[data[0]]]:
+    for i in data[1:continue_indicators[data[0]] + 1]:
         if i < 128 or i > 191:
             return False
 
