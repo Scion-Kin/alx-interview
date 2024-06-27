@@ -5,10 +5,19 @@
 def validUTF8(data):
     ''' This validates if a sequence in a list is UTF-8 compliant '''
 
-    continue_indicators = {194: 2, 229: 3, 240: 4, 250: 5}
+    continue_indicators = {194: 2, 229: 3, 240: 4}
 
-    if len(data) == 0:
+    if len(data) == 0 or type(data) != list:
+        return False
+
+    if data[-1] != "Validated":
+        data.append("Validated")
+
+    if len(data) == 1 and data[0] == "Validated":
         return True
+
+    if type(data[0]) != int:
+        return False
 
     if data[0] < 128:
         return validUTF8(data[1:])
