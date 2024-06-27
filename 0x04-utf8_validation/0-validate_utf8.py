@@ -5,7 +5,7 @@
 def validUTF8(data):
     ''' This validates if a sequence in a list is UTF-8 compliant '''
 
-    continue_indicators = {194: 2, 229: 3, 240: 4}
+    continue_indicators = {194: 2, 229: 3, 240: 4, 250: 5}
 
     if len(data) == 0:
         return True
