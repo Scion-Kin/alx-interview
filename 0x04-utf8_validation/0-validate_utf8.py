@@ -7,23 +7,26 @@ def validUTF8(data):
 
     continue_indicators = {194: 2, 229: 3, 240: 4}
 
-    if len(data) == 0:
-        return True
-
-    if type(data[0]) != int or type(data) != list:
+    if len(data) == 0 or type(data) != list:
         return False
 
-    if data[0] < 128:
-        return validUTF8(data[1:])
-
-    if data[0] not in continue_indicators:
-        return False
-
-    if len(data) < continue_indicators[data[0]]:
-        return False
-
-    for i in data[1:continue_indicators[data[0]] + 1]:
-        if i < 128 or i > 191:
+    for i in range(len(data)):
+        if type(data[i]) != int:
             return False
 
-    return validUTF8(data[continue_indicators[data[0]]:])
+        if data[i] < 128:
+            continue
+
+        if data[i] not in continue_indicators:
+            return False
+
+        if not data[continue_indicators[data[i]] + i]:
+            return False
+
+        for j in data[i:continue_indicators[data[i]] + i]:
+            if j < 128 or j > 191:
+                return False
+
+        i += continue_indicators[data[i]] + 1
+
+    return True
