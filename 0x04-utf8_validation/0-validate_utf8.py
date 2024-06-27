@@ -7,16 +7,10 @@ def validUTF8(data):
 
     continue_indicators = {194: 2, 229: 3, 240: 4}
 
-    if len(data) == 0 or type(data) != list:
-        return False
-
-    if data[-1] != "Validated":
-        data.append("Validated")
-
-    if len(data) == 1 and data[0] == "Validated":
+    if len(data) == 0:
         return True
 
-    if type(data[0]) != int:
+    if type(data[0]) != int or type(data) != list:
         return False
 
     if data[0] < 128:
