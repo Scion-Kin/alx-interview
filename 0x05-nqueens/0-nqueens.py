@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 ''' This module contains a program to solve the N-QUEENS puzzle '''
 
+from time import sleep
 import sys
 
 
@@ -58,20 +59,34 @@ class Queen:
 
         return all
 
-    def moveY(self):
-        self.y += 1
+    def __str__(self):
+        return "Queen {} is on row {}".format(self.x + 1, self.y + 1)
 
-    def moveX(self):
-        self.x += 1
+    def to_list(self):
+        return [self.y, self.x]
+
+    def move(self, direction):
+        self.y = self.y + 1 if direction == 'down' else self.y - 1
 
 
-def is_safe(queen1: Queen, queen2: Queen, width: int) -> bool:
+def is_safe(queen: Queen, queens: list, width: int) -> bool:
     ''' Checks if the Queen is on a safe square '''
 
-    if len([i for i in queen1.sees(width) if i in queen2.sees(width)]) > 0:
-        return False
+    covered = [j for i in queens for j in i.sees(width)]
 
-    return True
+    return True if queen.to_list() not in covered else False
+
+
+def board(width: int, queens: list):
+    bo = [[' ' for i in range(width)] for j in range(width)]
+
+    for i in queens:
+        bo[i[0]][i[1]] = 'Q'
+
+    for j in bo:
+        print('\t', j)
+
+    print('')
 
 
 if __name__ == "__main__":
@@ -84,20 +99,44 @@ if __name__ == "__main__":
             print('N must be at least 4')
             exit(1)
 
-        if int(sys.argv[1]) == 4:
-            print([[0, 1], [1, 3], [2, 0], [3, 2]])
-            print([[0, 2], [1, 0], [2, 3], [3, 1]])
+        width = int(sys.argv[1])
+        starting_position = [[width - 1, width - 1] for i in range(width)]
 
-        else:
-            print([[0, 1], [1, 3], [2, 5], [3, 0], [4, 2], [5, 4]])
-            print([[0, 2], [1, 5], [2, 1], [3, 4], [4, 0], [5, 3]])
-            print([[0, 3], [1, 0], [2, 4], [3, 1], [4, 5], [5, 2]])
-            print([[0, 4], [1, 2], [2, 0], [3, 5], [4, 3], [5, 1]])
+        shifted = [Queen(width - 1, i) for i in range(width)]
+        shifted[1].move('up')
+
+        current = 0
+        returning = False
+        while [i.to_list() for i in shifted] != starting_position:
+            ''' This loop will move every single queen on every possible
+                square to check for all possible solutions
+            '''
+
+            queen = shifted[current]
+            left_queens = shifted[:current] 
+
+            if current == 0:
+                if returning:
+                    queen.move('up') if queen.y != 0 else queen.move('down')
+                current += 1
+                continue
+
+            while not is_safe(queen, left_queens, width):
+                if queen.y == 0:
+                    break
+
+                queen.move('up')
+                board(width, [i.to_list() for i in shifted])
+                sleep(2)
+
+            if current == width - 1:
+                if is_safe(queen, left_queens, width):
+                    print([i.to_list() for i in shifted])
+
+                returning = True
+
+            current = current + 1 if current < width - 1 else 0
 
     except ValueError:
         print('N must be a number')
         exit(1)
-
-    ''' The arrangement logic can't be implemented today,
-        so, unfortunately, I'll have to leave it here for tonight.
-        This projects deadline was impossible. See you tommorrow '''
