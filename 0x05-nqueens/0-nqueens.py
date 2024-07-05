@@ -84,7 +84,7 @@ def board(width: int, queens: list):
         bo[i[0]][i[1]] = 'Q'
 
     for j in bo:
-        print('\t', j)
+        print('\t\t\t\t', [*j], '\n')
 
     print('')
 
@@ -103,23 +103,28 @@ if __name__ == "__main__":
         starting_position = [[width - 1, width - 1] for i in range(width)]
 
         shifted = [Queen(width - 1, i) for i in range(width)]
-        shifted[1].move('up')
+        #shifted[1].move('up')
 
         current = 0
         returning = False
+
         while [i.to_list() for i in shifted] != starting_position:
             ''' This loop will move every single queen on every possible
                 square to check for all possible solutions
             '''
-
             queen = shifted[current]
-            left_queens = shifted[:current] 
 
             if current == 0:
                 if returning:
-                    queen.move('up') if queen.y != 0 else queen.move('down')
+                    if queen.y != 0:
+                        queen.move('up')
+                        board(width, [i.to_list() for i in shifted])
+
                 current += 1
                 continue
+
+            left_queens = shifted[:current]
+            queen.y = width - 1
 
             while not is_safe(queen, left_queens, width):
                 if queen.y == 0:
@@ -129,11 +134,16 @@ if __name__ == "__main__":
                 board(width, [i.to_list() for i in shifted])
                 sleep(2)
 
-            if current == width - 1:
-                if is_safe(queen, left_queens, width):
-                    print([i.to_list() for i in shifted])
+            returning = True
+            if not is_safe(queen, left_queens, width):
+                if shifted[0].y == 0:
+                    break
 
-                returning = True
+                current = 0
+                continue
+
+            if current == width - 1:
+                print([i.to_list() for i in shifted], '\n')
 
             current = current + 1 if current < width - 1 else 0
 
