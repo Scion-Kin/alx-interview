@@ -77,7 +77,8 @@ def is_safe(queen: Queen, queens: list, width: int) -> bool:
 
     covered = [j for i in queens for j in i.sees(width)]
 
-    return True if len(queens) == 0 or queen.to_list() not in covered else False
+    return True if len(queens) == 0 or queen.to_list() not in covered\
+        else False
 
 
 def board(width: int, queens: list):
@@ -116,6 +117,7 @@ def safe_shift(queen: Queen, queens: list, index: int, width: int) -> bool:
         queen.move()
 
     return index
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
