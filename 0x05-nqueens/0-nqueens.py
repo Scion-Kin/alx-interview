@@ -65,8 +65,8 @@ class Queen:
     def to_list(self):
         return [self.y, self.x]
 
-    def move(self, direction):
-        self.y = self.y + 1 if direction == 'down' else self.y - 1
+    def move(self):
+        self.y -= 1
 
 
 def is_safe(queen: Queen, queens: list, width: int) -> bool:
@@ -74,76 +74,88 @@ def is_safe(queen: Queen, queens: list, width: int) -> bool:
 
     covered = [j for i in queens for j in i.sees(width)]
 
-    return True if queen.to_list() not in covered else False
+    return True if len(queens) == 0 or queen.to_list() not in covered else False
 
 
 def board(width: int, queens: list):
     bo = [[' ' for i in range(width)] for j in range(width)]
 
-    for i in queens:
+    for i in [i.to_list() for i in queens]:
         bo[i[0]][i[1]] = 'Q'
 
     for j in bo:
         print('\t\t\t\t', [*j], '\n')
 
-    print('')
+    print()
+
+
+def safe_shift(queen: Queen, queens: list, index: int, width: int) -> bool:
+    ''' This moves a queen upward in a safe square '''
+
+    if queen.y == 0:
+        if len(queens) == 0:
+            exit(0)
+
+        else:
+            queen.y = width - 1
+            index -= 1
+            return safe_shift(queens[index], queens[:index], index, width)
+
+    queen.move()
+
+    while not is_safe(queen, queens[:index], width):
+        if queen.y == 0:
+            queen.y = width - 1
+            index -= 1
+            return safe_shift(queens[index], queens[:index], index, width)
+
+        queen.move()
+
+    return index
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print('Usage: nqueens N')
-        exit(1)
+        print('Usage: nqueens N'), exit(1)
 
     try:
         if int(sys.argv[1]) < 4:
-            print('N must be at least 4')
-            exit(1)
+            print('N must be at least 4'), exit(1)
 
         width = int(sys.argv[1])
-        starting_position = [[width - 1, width - 1] for i in range(width)]
 
-        shifted = [Queen(width - 1, i) for i in range(width)]
-        #shifted[1].move('up')
+        queens = [Queen(width - 1, i) for i in range(width)]
 
-        current = 0
-        returning = False
+        current = 1
+        # shifting = 0  # queen to check for all preceding queens possibilities
 
-        while [i.to_list() for i in shifted] != starting_position:
-            ''' This loop will move every single queen on every possible
-                square to check for all possible solutions
-            '''
-            queen = shifted[current]
+        while True:
+            ''' To be documented '''
 
+            board(width, queens)  # print the board
+            sleep(2)
+
+            queen = queens[current]
             if current == 0:
-                if returning:
-                    if queen.y != 0:
-                        queen.move('up')
-                        board(width, [i.to_list() for i in shifted])
+                for i in range(1, width):
+                    queens[i].y = width - 1
 
+                queen.move()
                 current += 1
                 continue
 
-            left_queens = shifted[:current]
-            queen.y = width - 1
-
-            while not is_safe(queen, left_queens, width):
+            while not is_safe(queen, queens[:current], width):
                 if queen.y == 0:
                     break
+                queen.move()
+                board(width, queens)
 
-                queen.move('up')
-                board(width, [i.to_list() for i in shifted])
-                sleep(2)
+            if not is_safe(queen, queens[:current], width):
+                current = safe_shift(queen, queens[:current], current, width)
 
-            returning = True
-            if not is_safe(queen, left_queens, width):
-                if shifted[0].y == 0:
-                    break
-
-                current = 0
-                continue
-
-            if current == width - 1:
-                print([i.to_list() for i in shifted], '\n')
+            if queen == queens[width - 1] and is_safe(queen, queens[:current], width):                
+                print("Found combination!", '\n')
+                print(*[[i.x, i.y] for i in queens], '\n')
 
             current = current + 1 if current < width - 1 else 0
 
