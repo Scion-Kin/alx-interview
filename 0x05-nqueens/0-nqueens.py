@@ -5,6 +5,9 @@ from time import sleep
 import sys
 
 
+patterns = []
+
+
 class Queen:
     ''' A Queen class for all the necessary methods. '''
 
@@ -94,6 +97,7 @@ def safe_shift(queen: Queen, queens: list, index: int, width: int) -> bool:
 
     if queen.y == 0:
         if len(queens) == 0:
+            print(*patterns, sep='\n\n')
             exit(0)
 
         else:
@@ -113,7 +117,6 @@ def safe_shift(queen: Queen, queens: list, index: int, width: int) -> bool:
 
     return index
 
-
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print('Usage: nqueens N'), exit(1)
@@ -132,8 +135,8 @@ if __name__ == "__main__":
         while True:
             ''' To be documented '''
 
-            board(width, queens)  # print the board
-            sleep(2)
+            # board(width, queens)  # print the board
+            # sleep(2)
 
             queen = queens[current]
             if current == 0:
@@ -148,14 +151,15 @@ if __name__ == "__main__":
                 if queen.y == 0:
                     break
                 queen.move()
-                board(width, queens)
+                # board(width, queens)
 
             if not is_safe(queen, queens[:current], width):
                 current = safe_shift(queen, queens[:current], current, width)
 
-            if queen == queens[width - 1] and is_safe(queen, queens[:current], width):                
+            if is_safe(queen, queens[:current], width) and queen == queens[width - 1]:                
                 print("Found combination!", '\n')
-                print(*[[i.x, i.y] for i in queens], '\n')
+                print(*[i.to_list() for i in queens], '\n')
+                patterns.append([[i.x, i.y] for i in queens])
 
             current = current + 1 if current < width - 1 else 0
 
