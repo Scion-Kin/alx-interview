@@ -132,7 +132,7 @@ if __name__ == "__main__":
         current = 1
         # shifting = 0  # queen to check for all preceding queens possibilities
 
-        while True:
+        while queens[0].y != -1:
             ''' To be documented '''
 
             # board(width, queens)  # print the board
@@ -156,12 +156,18 @@ if __name__ == "__main__":
             if not is_safe(queen, queens[:current], width):
                 current = safe_shift(queen, queens[:current], current, width)
 
-            if is_safe(queen, queens[:current], width) and queen == queens[width - 1]:                
-                print("Found combination!", '\n')
-                print(*[i.to_list() for i in queens], '\n')
-                patterns.append([[i.x, i.y] for i in queens])
+            for i in range(len(queens)):
+                if not is_safe(queens[i], queens[:i], width):
+                    break
+
+                else:
+                    if i == width - 1:
+                        # print("Found combination!", '\n')
+                        patterns.append([[i.x, i.y] for i in queens])
 
             current = current + 1 if current < width - 1 else 0
+
+        print(*patterns, sep='\n\n')
 
     except ValueError:
         print('N must be a number')
