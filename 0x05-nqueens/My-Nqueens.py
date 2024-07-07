@@ -1,7 +1,14 @@
 #!/usr/bin/python3
-''' This module contains a program to solve the N-QUEENS puzzle '''
+''' This module contains the verbose capable version of the alx task
+    This module contains everything to help visualize the process
+    of solving the challenge. To enable verbose, run the program like this:
 
-import sys
+      ./0-nqueens.py 5 -v          # 5 is the number of queens
+ '''
+
+from datetime import datetime as dt
+from time import sleep
+import argparse
 
 
 class Queen:
@@ -75,6 +82,18 @@ def is_safe(queen: Queen, queens: list, width: int) -> bool:
     return True if queen.to_list() not in covered else False
 
 
+def board(width: int, queens: list):
+    bo = [[' ' for i in range(width)] for j in range(width)]
+
+    for i in [i.to_list() for i in queens]:
+        bo[i[0]][i[1]] = 'Q'
+
+    for j in bo:
+        print('\t\t\t\t', [*j], '\n')
+
+    print()
+
+
 def run(queens, index, width):
     ''' shifts the coordinates recursively '''
     queen = queens[index]
@@ -83,7 +102,9 @@ def run(queens, index, width):
     while queen.y != 0:
         queen.move()
         if index == width - 1:
-            check_pattern(queens)
+            if check_pattern(queens) and args.verbose:
+                board(width, queens)
+                sleep(1)
 
         else:
             run(queens, index + 1, width)
@@ -97,23 +118,32 @@ def check_pattern(queens):
         else:
             if queens[i] == queens[width - 1]:
                 patterns.append([[i.x, i.y] for i in queens])
+                print(patterns[-1], '\n')
                 return True
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print('Usage: nqueens N'), exit(1)
-
     try:
-        if int(sys.argv[1]) < 4:
+        parser = argparse.ArgumentParser(description="N-Queens Solver")
+        parser.add_argument("-v", "--verbose", action="store_true",
+                            help="increase output verbosity")
+        parser.add_argument("N", type=int, help="size of the board")
+        args = parser.parse_args()
+
+        if args.verbose:
+            print("Verbose mode is on \n")
+
+        then = dt.now()
+        width = int(args.N)
+        if width < 4:
             print('N must be at least 4'), exit(1)
 
-        width = int(sys.argv[1])
         queens = [Queen(width - 1, i) for i in range(width)]
         patterns = []
 
         run(queens, 0, width)
-        print(*patterns, sep='\n')
+        print("\nFinished in {}\n".format(dt.now() - then))
+        print("Patterns found: {}".format(len(patterns)))
 
     except ValueError:
         print('N must be a number'), exit(1)
