@@ -63,7 +63,7 @@ class Queen:
         return all
 
     def __str__(self):
-        return "Queen {} is on row {}".format(self.x + 1, self.y + 1)
+        return "Queen {} is on row {}".format(self.x, self.y)
 
     def to_list(self):
         return [self.y, self.x]
@@ -76,9 +76,8 @@ def is_safe(queen: Queen, queens: list, width: int) -> bool:
     ''' Checks if the Queen is on a safe square '''
 
     covered = [j for i in queens for j in i.sees(width)]
-
-    return True if len(queens) == 0 or queen.to_list() not in covered\
-        else False
+    
+    return True if queen.to_list() not in covered else False
 
 
 def board(width: int, queens: list):
@@ -93,31 +92,32 @@ def board(width: int, queens: list):
     print()
 
 
-def safe_shift(queen: Queen, queens: list, index: int, width: int) -> bool:
-    ''' This moves a queen upward in a safe square '''
+def run(queens, index, width):
+    ''' shifts the coordinates recursively '''
 
-    if queen.y == 0:
-        if len(queens) == 0:
-            print(*patterns, sep='\n\n')
-            exit(0)
+    queen = queens[index]
+    queen.y = width
 
-        else:
-            queen.y = width - 1
-            index -= 1
-            return safe_shift(queens[index], queens[:index], index, width)
-
-    queen.move()
-
-    while not is_safe(queen, queens[:index], width):
-        if queen.y == 0:
-            queen.y = width - 1
-            index -= 1
-            return safe_shift(queens[index], queens[:index], index, width)
-
+    while queen.y != 0:
         queen.move()
+        if index == width - 1:
+            check_pattern(queens)
+            board(width, queens)
+            sleep(0.5)
+        else:
+            run(queens, index + 1, width)
 
-    return index
 
+def check_pattern(queens):
+    ''' checks for a potential pattern '''
+    for i in range(1, width):
+        if not is_safe(queens[i], queens[:i], width):
+            return
+        else:
+            if queens[i] == queens[width - 1]:
+                patterns.append([[i.x, i.y] for i in queens])
+                print(queens[i])
+                print([[i.x, i.y] for i in queens])
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -128,47 +128,9 @@ if __name__ == "__main__":
             print('N must be at least 4'), exit(1)
 
         width = int(sys.argv[1])
-
         queens = [Queen(width - 1, i) for i in range(width)]
 
-        current = 1
-        # shifting = 0  # queen to check for all preceding queens possibilities
-
-        while queens[0].y != -1:
-            ''' To be documented '''
-
-            # board(width, queens)  # print the board
-            # sleep(2)
-
-            queen = queens[current]
-            if current == 0:
-                for i in range(1, width):
-                    queens[i].y = width - 1
-
-                queen.move()
-                current += 1
-                continue
-
-            while not is_safe(queen, queens[:current], width):
-                if queen.y == 0:
-                    break
-                queen.move()
-                # board(width, queens)
-
-            if not is_safe(queen, queens[:current], width):
-                current = safe_shift(queen, queens[:current], current, width)
-
-            for i in range(len(queens)):
-                if not is_safe(queens[i], queens[:i], width):
-                    break
-
-                else:
-                    if i == width - 1:
-                        # print("Found combination!", '\n')
-                        patterns.append([[i.x, i.y] for i in queens])
-
-            current = current + 1 if current < width - 1 else 0
-
+        run(queens, 0, width)
         print(*patterns, sep='\n\n')
 
     except ValueError:
