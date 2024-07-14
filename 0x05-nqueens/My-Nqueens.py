@@ -20,7 +20,6 @@ def board(width: int, queens: list):
 
 def check(index, init):
     ''' this solves the N_QUEENS challenge recursively '''
-
     covered = []
     up, down, right = init[index], init[index], init[index]
 
@@ -32,7 +31,7 @@ def check(index, init):
 
     return covered
 
-def run(index, init):
+def run(index):
     ''' run recursively '''
     covered = []
     for i in range(index):
@@ -43,15 +42,15 @@ def run(index, init):
     for i in pos:
         init[index][0] = i
 
-        if index == width - 1 and init[index] not in covered:
-            # print("Found combo!")
-            # board(width, init)
-            combo.append(init)
-
         if init[index] in covered:
             continue
 
-        run(index + 1, init)
+        if index == width - 1 and init[index] not in covered:
+            # board(width, init)
+            combo.append(repr(init))
+            return
+
+        run(index + 1)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -65,10 +64,10 @@ if __name__ == "__main__":
         init = [[width - 1, i] for i in range(width)]
         combo = []
 
-        run(0, init)
+        run(0)
 
         print(*combo, sep='\n')
-        print("Combinations found: {}".format(len(combo)))
+        print("\n Combinations found: {}".format(len(combo)))
 
     except ValueError:
         print('N must be a number'), exit(1)

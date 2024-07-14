@@ -1,53 +1,5 @@
-#!/usr/bin/python3
-''' Does something '''
-
-import sys
-
-
-def check(index, queens, covered):
-    ''' this solves the N_QUEENS challenge recursively '''
-    up, down, right = init[index], init[index], init[index]
-
-    for i in range(init[index][0], 0, -1):
-        up = [up[0] - 1, up[1] + 1]
-        down = [down[0] + 1, down[1] + 1]
-        right = [right[0], right[1] + 1]
-        covered.extend([up, right, down])
-
-
-def run(index):
-    ''''''
-    check(index, init, covered)
-    pos = [i for i in range(width) if i not in [i[1] for i in init[:index]]]
-
-    if index == width - 1:
-        count += 1
-
-    else:
-        for i in pos:
-            print(init)
-            init[index][0] = i
-            if init[index] in covered:
-                continue
-
-            run(index + 1)
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print('Usage: nqueens N'), exit(1)
-
-    try:
-        width = int(sys.argv[1])
-        if width < 4:
-            print('N must be at least 4'), exit(1)
-
-        init = [[width - 1, i] for i in range(width)]
-        covered = []
-        count = 0
-
-        run(0)
-
-        print(count)
-
-    except ValueError:
-        print('N must be a number'), exit(1)
+    0,   1,   2,   3
+0 [' ', ' ', ' ', 'Q']
+1 [' ', ' ', ' ', ' ']
+2 [' ', 'Q', 'Q', ' ']
+3 ['Q', ' ', ' ', ' ']
