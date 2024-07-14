@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 ''' Solves the N-QUEENS Challenge '''
 
-import sys
+import argparse
 from time import sleep
+from datetime import datetime as dt
 
 
 def board(width: int, queens: list):
@@ -15,14 +16,15 @@ def board(width: int, queens: list):
         print('\t\t\t\t', [*j], '\n')
 
     print()
-    sleep(0.5)
+    sleep(0.2)
 
-def check(index, init):
+
+def check(index, inits):
     ''' this solves the N_QUEENS challenge recursively '''
     covered = []
-    up, down, right = init[index], init[index], init[index]
+    up, down, right = inits[index], inits[index], inits[index]
 
-    for i in range(len(init), 0, -1):
+    for i in range(len(inits), 0, -1):
         up = [up[0] - 1, up[1] + 1]
         down = [down[0] + 1, down[1] + 1]
         right = [right[0], right[1] + 1]
@@ -30,43 +32,53 @@ def check(index, init):
 
     return covered
 
+
 def run(index):
     ''' run recursively '''
     covered = []
     for i in range(index):
-        covered += check(i, init)
-    
-    pos = [i for i in range(width) if i not in [i[0] for i in init[:index]]]
+        covered += check(i, inits)
+
+    pos = [i for i in range(width) if i not in [i[0] for i in inits[:index]]]
 
     for i in pos:
-        init[index][0] = i
-
-        if init[index] in covered:
+        inits[index][0] = i
+        if inits[index] in covered:
             continue
 
         if index == width - 1:
-            # board(width, init)
-            combo.append([[j[1], j[0]] for j in init])
+            if args.verbose:
+                board(width, inits)
+
+            combo.append([[j[1], j[0]] for j in inits])
             return
 
         run(index + 1)
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print('Usage: nqueens N'), exit(1)
 
+if __name__ == "__main__":
     try:
-        width = int(sys.argv[1])
+        parser = argparse\
+            .ArgumentParser(description='Solves the N-Queens puzzle.')
+        parser.add_argument('N', type=int,
+                            help='Size of the board (N must be at least 4)')
+        parser.add_argument('-v', '--verbose', action='store_true',
+                            help='Enable verbose output')
+        args = parser.parse_args()
+
+        width = int(args.N)
         if width < 4:
             print('N must be at least 4'), exit(1)
 
-        init = [[width - 1, i] for i in range(width)]
-        combo = []
+        inits, combo = [[width - 1, i] for i in range(width)], []
+        then = dt.now()
 
-        run(0)
+        print("\n\t Started... \n\n \t Crunching possibilities... \n")
 
-        print(*combo, sep='\n')
-        print("\n Combinations found: {}".format(len(combo1)))
+        run(0), print("\t Finished in {}".format(dt.now() - then))
+
+        print("\n\t Patterns found: {}\n".format(len(combo)))
+        [print("\t {}".format(i)) for i in combo]
 
     except ValueError:
         print('N must be a number'), exit(1)
