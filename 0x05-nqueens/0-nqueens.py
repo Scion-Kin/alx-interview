@@ -82,22 +82,16 @@ def run(queens, index, width):
 
     while queen.y != 0:
         queen.move()
+
         if index == width - 1:
-            check_pattern(queens)
-
-        else:
-            run(queens, index + 1, width)
-
-
-def check_pattern(queens):
-    ''' checks for a potential pattern '''
-    for i in range(1, width):
-        if not is_safe(queens[i], queens[:i], width):
-            return False
-        else:
-            if queens[i] == queens[width - 1]:
+            if is_safe(queen, queens[:index], width):
                 patterns.append([[i.x, i.y] for i in queens])
-                return True
+                continue
+
+        if index != 0 and not is_safe(queen, queens[:index], width):
+            continue
+
+        run(queens, index + 1, width)
 
 
 if __name__ == "__main__":
