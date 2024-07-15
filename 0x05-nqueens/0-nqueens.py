@@ -7,7 +7,7 @@ import sys
 
 
 def check(index, inits):
-    ''' this solves the N_QUEENS challenge recursively '''
+    ''' this registers attacked squares '''
     covered = []
     up, down, right = inits[index], inits[index], inits[index]
 
@@ -21,7 +21,7 @@ def check(index, inits):
 
 
 def run(index):
-    ''' run recursively '''
+    ''' run recursively to find possible patterns '''
     covered = []
     for i in range(index):
         covered += check(i, inits)
