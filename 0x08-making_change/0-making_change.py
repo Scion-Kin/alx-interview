@@ -27,7 +27,11 @@ def makeChange(coins, total):
 
     all = []
     for i in coins:
-        all.append(recur(coins, i, total))
+        try:
+            all.append(recur(coins, i, total))
+
+        except RecursionError:
+            pass
 
     all = [i for i in all if i != -1]
 
