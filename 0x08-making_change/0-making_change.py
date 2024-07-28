@@ -6,6 +6,9 @@ def makeChange(coins, total):
     ''' This returns the lowest total of coin flips
         needed to make change for a given total '''
 
+    if total <= 0:
+        return 0
+
     # This table will store the answer to our sub problems
     dp = [total + 1] * (total + 1)
 
