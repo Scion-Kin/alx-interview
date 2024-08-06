@@ -25,7 +25,7 @@ def isWinner(x, nums):
     scores = {"Maria": 0, "Ben": 0}
     turns = ["Maria", "Ben"]
 
-    if len(nums) == 0 or x == 0:
+    if len(nums) != x:
         return None
 
     for i in range(x):
