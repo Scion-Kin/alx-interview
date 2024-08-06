@@ -25,6 +25,9 @@ def isWinner(x, nums):
     scores = {"Maria": 0, "Ben": 0}
     turns = ["Maria", "Ben"]
 
+    if len(nums) == 0 or x == 0:
+        return None
+
     for i in range(x):
         num = nums[i]
         primes = [i for i in range(num + 1) if is_prime(i)]
