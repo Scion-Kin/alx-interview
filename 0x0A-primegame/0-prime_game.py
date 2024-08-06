@@ -22,27 +22,13 @@ def is_prime(n):
 def isWinner(x, nums):
     ''' Calculates the winner of the prime numbers game '''
 
-    scores = {"Maria": 0, "Ben": 0}
-    turns = ["Maria", "Ben"]
+    primes = [i for i in range(max(nums)) if is_prime(i)]
+    M, B = 0, 0
 
-    if len(nums) != x:
-        return None
-
-    for i in range(x):
+    for i in range(2, x):
         num = nums[i]
-        primes = [i for i in range(num + 1) if is_prime(i)]
-        turn = 0
+        nprimes = [i for i in primes if i <= num]
+        M = M + 1 if len(nprimes) - 1 % 2 == 0 else M + 0
+        B += B + 1 if len(nprimes) % 2 == 0 else B + 0
 
-        while len(primes) > -1:
-            if len(primes) == 0:
-                scores[turns[turn - 1]] += 1
-                break
-
-            picked = primes[0]
-            primes = [i for i in primes if i % picked != 0]
-            turn = 0 if turn == 1 else 1
-
-    if scores["Maria"] == scores["Ben"]:
-        return None
-
-    return 'Maria' if scores['Maria'] > scores['Ben'] else 'Ben'
+    return 'Maria' if M > B else None if M == B else "Ben"
